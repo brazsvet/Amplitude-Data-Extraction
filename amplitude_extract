@@ -1,0 +1,28 @@
+# imports
+import os
+import json
+import requests
+import time
+from datetime import time
+from dotenv import load_dotenv # for using API credentials from .env file
+
+# API set up
+url = 'https://analytics.eu.amplitude.com/api/2/export'
+start_time = '20260914T00'
+end_time = '20260924T23'
+params = {
+    'start': start_time,
+    'end': end_time
+}
+
+# enviromental variables from .env file
+load_dotenv()
+
+# saving credentials
+api_key = os.getenv("AMP_API_KEY")
+secret_key = os.getenv("AMP_SECRET_KEY")
+
+# API call
+response = requests.get(url, params=params, auth=(api_key, secret_key))
+
+# see what the response look like
