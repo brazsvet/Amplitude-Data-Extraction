@@ -3,8 +3,9 @@ import os
 import json
 import requests
 import time
-from datetime import time
+from datetime import datetime
 from dotenv import load_dotenv # for using API credentials from .env file
+import zipfile # API returns .zip with multiple .json
 
 # API set up
 url = 'https://analytics.eu.amplitude.com/api/2/export'
@@ -26,3 +27,20 @@ secret_key = os.getenv("AMP_SECRET_KEY")
 response = requests.get(url, params=params, auth=(api_key, secret_key))
 
 # see what the response look like
+# content_type = response.headers.get("Content-Type")
+# print(content_type) --> "application/zip"
+
+# create the data directory
+data_dir = 'data'
+os.makedirs(data_dir, exist_ok=True)
+
+# save the raw zip file
+zip_path = f'{data_dir}/{start_time}-{end_time}.zip'
+with open(zip_path, "wb") as f:
+    f.write(response.content)
+
+# extract the content from the .zip
+with zipfile.ZipFile(zip_path, "r") as zip_ref:
+    zip_ref.extractall(f'{data_dir}/{start_time}-{end_time}')
+
+print("Files extracted successfully")
