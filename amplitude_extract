@@ -48,42 +48,67 @@ secret_key = os.getenv("AMP_SECRET_KEY")
 
 # API call
 response = requests.get(url, params=params, auth=(api_key, secret_key))
-print(response.status_code)
 
-# see what the response look like
-# content_type = response.headers.get("Content-Type")
-# print(content_type) --> "application/zip"
+# getting API request status
+status = response.status_code
 
-# create the data directory
-data_dir = 'data'
-os.makedirs(data_dir, exist_ok=True)
+# if connection was successfull
+if 200 <= status < 300:
 
-# save the raw zip file
-zip_path = f'{data_dir}/{start_time}-{end_time}.zip'
-with open(zip_path, "wb") as f:
-    f.write(response.content)
-print('.zip archieve saved successfully')
+    print("Response successfully recieved")
+    logger.info("Response successfully recieved")
 
-# extract the content from the .zip --> they are .json.gz files
-gz_dir = f'{data_dir}/{start_time}-{end_time}'
-os.makedirs(gz_dir, exist_ok=True)
+    # create the data directory
+    data_dir = 'data'
+    os.makedirs(data_dir, exist_ok=True)
 
-with zipfile.ZipFile(zip_path, "r") as zip_ref:
-    zip_ref.extractall(gz_dir)
-print(".gz files extracted successfully")
+    # save the raw zip file
+    zip_path = f'{data_dir}/{start_time}-{end_time}.zip'
+    with open(zip_path, "wb") as f:
+        f.write(response.content)
+    print(f'File saved successfully. Destination: {zip_path}')
+    logger.info(f'File saved successfully. Destination: {zip_path}')
 
-# create folder for extracted jsons
-gz_path = f'{gz_dir}/{os.listdir(gz_dir)[0]}'
-folder_path = f'{gz_dir}/extracted_jsons'
-os.makedirs(folder_path, exist_ok=True)
-print("Folder 'Extracted jsons' created")
+    # extract the content from the .zip to .json.gz files
+    gz_dir = f'{data_dir}/{start_time}-{end_time}'
+    os.makedirs(gz_dir, exist_ok=True)
 
-# extract all the .gz files from gz_dir to .json format
-for filename in os.listdir(gz_path):
-    if filename.endswith(".json.gz"):
-        json_path = os.path.join(folder_path, filename[:-3])  # removes .gz extension
-        with gzip.open(f'{gz_path}/{filename}', "rt", encoding="utf-8") as f:
-            data = f.read()
-            with open(json_path, "w") as file:
-                json.dump(data, file)
+    with zipfile.ZipFile(zip_path, "r") as zip_ref:
+        zip_ref.extractall(gz_dir)
+    print(f"Archieve successfully unpacked. Destination: {gz_dir}")
+    logger.info(f"Archieve successfully unpacked. Destination: {gz_dir}")
+
+    # create folder for extracted jsons
+    gz_path = f'{gz_dir}/{os.listdir(gz_dir)[0]}'
+    folder_path = f'{gz_dir}/extracted_jsons'
+    os.makedirs(folder_path, exist_ok=True)
+    print(f"Folder created: {folder_path}")
+    logger.info(f"Folder created: {folder_path}")
+
+    # extract all the .gz files from gz_dir to .json format
+    files = 0
+    for filename in os.listdir(gz_path):
+        if filename.endswith(".json.gz"):
+            files += 1
+            json_path = os.path.join(folder_path, filename[:-3])  # removes .gz extension
+            with gzip.open(f'{gz_path}/{filename}', "rt", encoding="utf-8") as f:
+                data = f.read()
+                with open(json_path, "w") as file:
+                    json.dump(data, file)
+
+    print(f"Json files uploaded: {files}")
+    logger.info(f"Json files uploaded: {files}")
+
+elif status == 400:
+    print("The file size of the exported data is too large. Shorten the time ranges and try again. The limit size is 4GB.")
+    logger.error("The file size of the exported data is too large. Shorten the time ranges and try again. The limit size is 4GB.")
+elif status == 404:
+    print("No data available for the time range requested.")
+    logger.error("No data available for the time range requested.")
+elif status == 504:
+    print("	The amount of data is large causing a timeout. For large amounts of data, use the Amazon S3 destination.")
+    logger.error("	The amount of data is large causing a timeout. For large amounts of data, use the Amazon S3 destination.")
+else:
+    print("Something went wrong. No data retrieved.")
+    logger.critical("Something went wrong. No data retrieved.")
 
