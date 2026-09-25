@@ -5,7 +5,9 @@ import requests
 import time
 from datetime import datetime
 from dotenv import load_dotenv # for using API credentials from .env file
-import zipfile # API returns .zip with multiple .json
+import zipfile # API returns .zip 
+import gzip # to unpack json.gz files from .zip returned by API
+
 
 # API set up
 url = 'https://analytics.eu.amplitude.com/api/2/export'
@@ -38,9 +40,13 @@ os.makedirs(data_dir, exist_ok=True)
 zip_path = f'{data_dir}/{start_time}-{end_time}.zip'
 with open(zip_path, "wb") as f:
     f.write(response.content)
+print('.zip archieve saved successfully')
 
-# extract the content from the .zip
+# extract the content from the .zip --> they are .json.gz files
+gz_dir = f'{data_dir}/{start_time}-{end_time}'
 with zipfile.ZipFile(zip_path, "r") as zip_ref:
-    zip_ref.extractall(f'{data_dir}/{start_time}-{end_time}')
+    zip_ref.extractall(gz_dir)
+print(".gz files extracted successfully")
 
-print("Files extracted successfully")
+# extract all the .gz files from gz_dir to .json format
+# for i in range(0, len(os.listdir(gz_dir))):
