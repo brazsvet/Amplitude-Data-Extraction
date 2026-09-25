@@ -2,15 +2,14 @@
 import os
 import json
 import requests
-import time
-from datetime import datetime
 from dotenv import load_dotenv # for using API credentials from .env file
-import zipfile # API returns .zip with multiple .json
+import zipfile # API returns .zip 
+import gzip # to unpack json.gz files from .zip returned by API
 
 # API set up
 url = 'https://analytics.eu.amplitude.com/api/2/export'
-start_time = '20260914T00'
-end_time = '20260924T23'
+start_time = '20260915T00'
+end_time = '20260915T23'
 params = {
     'start': start_time,
     'end': end_time
@@ -38,9 +37,29 @@ os.makedirs(data_dir, exist_ok=True)
 zip_path = f'{data_dir}/{start_time}-{end_time}.zip'
 with open(zip_path, "wb") as f:
     f.write(response.content)
+print('.zip archieve saved successfully')
 
-# extract the content from the .zip
+# extract the content from the .zip --> they are .json.gz files
+gz_dir = f'{data_dir}/{start_time}-{end_time}'
+os.makedirs(gz_dir, exist_ok=True)
+
 with zipfile.ZipFile(zip_path, "r") as zip_ref:
-    zip_ref.extractall(f'{data_dir}/{start_time}-{end_time}')
+    zip_ref.extractall(gz_dir)
+print(".gz files extracted successfully")
 
-print("Files extracted successfully")
+# create folder for extracted jsons
+gz_path = f'{gz_dir}/{os.listdir(gz_dir)[0]}'
+folder_path = f'{gz_dir}/extracted_jsons'
+os.makedirs(folder_path, exist_ok=True)
+print("Folder 'Extracted jsons' created")
+
+# extract all the .gz files from gz_dir to .json format
+for filename in os.listdir(gz_path):
+    if filename.endswith(".json.gz"):
+        json_path = os.path.join(folder_path, filename[:-3])  # removes .gz extension
+        with gzip.open(f'{gz_path}/{filename}', "rt", encoding="utf-8") as f:
+            data = f.read()
+            print(data)
+            with open(json_path, "w") as file:
+                json.dump(data, file)
+
