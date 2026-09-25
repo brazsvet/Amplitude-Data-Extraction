@@ -48,6 +48,7 @@ secret_key = os.getenv("AMP_SECRET_KEY")
 
 # API call
 response = requests.get(url, params=params, auth=(api_key, secret_key))
+print(response.status_code)
 
 # getting API request status
 status = response.status_code
@@ -111,4 +112,5 @@ elif status == 504:
 else:
     print("Something went wrong. No data retrieved.")
     logger.critical("Something went wrong. No data retrieved.")
+
 
