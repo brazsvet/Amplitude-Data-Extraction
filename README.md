@@ -3,7 +3,7 @@ This script is extracting the Amplitude web-site data with the Amplitude API. AP
 
 The amplitude_extract script is calling the API, saving .zip files locally under the /data folder, then extracts .gz files and stores them under the /{start_time}-{end_time} folder and unpacks .json files under the /extracted_jsons
 
-<img width="103" height="227" alt="image" src="https://github.com/user-attachments/assets/ba74c645-76d6-4989-9cc6-13b2a16f3b8e" />
+<img width="206" height="450" alt="image" src="https://github.com/user-attachments/assets/ba74c645-76d6-4989-9cc6-13b2a16f3b8e" />
 
 To use program, open the amplitude_extract script and run it.
 
