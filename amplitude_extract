@@ -8,7 +8,6 @@ from dotenv import load_dotenv # for using API credentials from .env file
 import zipfile # API returns .zip 
 import gzip # to unpack json.gz files from .zip returned by API
 
-
 # API set up
 url = 'https://analytics.eu.amplitude.com/api/2/export'
 start_time = '20260914T00'
