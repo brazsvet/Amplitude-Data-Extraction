@@ -5,15 +5,39 @@ import requests
 from dotenv import load_dotenv # for using API credentials from .env file
 import zipfile # API returns .zip 
 import gzip # to unpack json.gz files from .zip returned by API
+from datetime import date
+from datetime import timedelta
+from datetime import datetime
+import logging
 
 # API set up
 url = 'https://analytics.eu.amplitude.com/api/2/export'
-start_time = '20260915T00'
-end_time = '20260915T23'
+
+# planning to retrieve data from yesterday
+yesterday = str((date.today() - timedelta(days = 1))).replace("-", "")
+start_time = f'{yesterday}T00'
+end_time = f'{yesterday}T23'
 params = {
     'start': start_time,
     'end': end_time
 }
+
+# logging set up
+timestamp = datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+log_dir = 'log'
+os.makedirs(log_dir, exist_ok = True)
+log_filename = f'{log_dir}/{timestamp}.log'
+
+# configure logging so messages are written to the log file
+logging.basicConfig(
+    filename = log_filename,
+    format = '%(asctime)s - %(levelname)s - %(message)s',
+    level = logging.INFO
+)
+
+# create the logger and confirm that it has been successfully set up
+logger = logging.getLogger()
+logger.info('Logger successfully initialised')
 
 # enviromental variables from .env file
 load_dotenv()
@@ -24,6 +48,7 @@ secret_key = os.getenv("AMP_SECRET_KEY")
 
 # API call
 response = requests.get(url, params=params, auth=(api_key, secret_key))
+print(response.status_code)
 
 # see what the response look like
 # content_type = response.headers.get("Content-Type")
@@ -59,7 +84,6 @@ for filename in os.listdir(gz_path):
         json_path = os.path.join(folder_path, filename[:-3])  # removes .gz extension
         with gzip.open(f'{gz_path}/{filename}', "rt", encoding="utf-8") as f:
             data = f.read()
-            print(data)
             with open(json_path, "w") as file:
                 json.dump(data, file)
 

@@ -1,5 +1,6 @@
 # Amplitude Data Extraction
-This script is extracting the Amplitude web-site data with the Amplitude API. API returns .zip files, consisting of .json.gz files. 
+
+This script is extracting the Amplitude web-site data with the Amplitude API. API returns .zip files, consisting of .json.gz files.
 
 The amplitude_extract script is calling the API, saving .zip files locally under the /data folder, then extracts .gz files and stores them under the /{start_time}-{end_time} folder and unpacks .json files under the /extracted_jsons
 
