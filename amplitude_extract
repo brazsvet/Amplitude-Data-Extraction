@@ -97,8 +97,15 @@ if 200 <= status < 300:
                 with open(json_path, "w") as file:
                     json.dump(data, file)
 
-    print(f"Json files uploaded: {files}")
-    logger.info(f"Json files uploaded: {files}")
+    if files == 24:
+        print(f'Files from {yesterday} are complete. Files to upload: {files}')
+        logger.info(f'Files from {yesterday} are complete. Files to upload: {files}')
+    elif files > 0:
+        print(f'Files from {yesterday} are incomplete. Files to upload: {files}')
+        logger.warning(f'Files from {yesterday} are incomplete. Files to upload: {files}')
+    else:
+        print(f'No files from {yesterday}. Files to upload: {files}')
+        logger.error(f'No files from {yesterday}. Files to upload: {files}')
 
 elif status == 400:
     print("The file size of the exported data is too large. Shorten the time ranges and try again. The limit size is 4GB.")
