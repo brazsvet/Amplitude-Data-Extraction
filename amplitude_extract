@@ -97,7 +97,7 @@ if 200 <= status < 300:
                 with open(json_path, "w") as file:
                     json.dump(data, file)
 
-    if files == 24:
+    if files >= 24:
         print(f'Files from {yesterday} are complete. Files downloaded: {files}')
         logger.info(f'Files from {yesterday} are complete. Files downloaded: {files}')
     elif files > 0:
