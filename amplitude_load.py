@@ -45,19 +45,27 @@ s3_client = boto3.client(
 )
 
 # list all files in the yesterday folder
-files_to_upload = os.listdir(files_path)
+files_extracted = os.listdir(files_path)
 
-# control the number of files to upload
+# list the files in the s3 bucket
+objects = s3_client.list_objects_v2(Bucket=AWS_BUCKET_NAME)
+files_s3 = []
+for my_bucket_object in objects['Contents']:
+    files_s3.append(my_bucket_object['Key'])
+
+# only upload the files that are not in s3 bucket
+files_to_upload = []
+for file in files_extracted:
+    if file not in files_s3:
+        files_to_upload.append(file)
+
+# check if there are files to upload
 files_count = len(files_to_upload)
-if files_count > 0:
-    if files_count == 24:
-        print(f'Files from {yesterday} are complete. Files to upload: {files_count}')
-        logger.info(f'Files from {yesterday} are complete. Files to upload: {files_count}')
-    elif files_count > 0:
-        print(f'Files from {yesterday} are incomplete. Files to upload: {files_count}')
-        logger.warning(f'Files from {yesterday} are incomplete. Files to upload: {files_count}')
 
-    # uploading all the files from yesterday folder to s3 bucket
+if files_count > 0:
+    print(f'Files to upload: {files_count}')
+    logger.info(f'Files to upload: {files_count}')
+    # uploading the files to s3 bucket
     for file in files_to_upload:
         filename_s3 = file
         file_to_upload = f'{files_path}/{file}'
@@ -70,8 +78,7 @@ if files_count > 0:
         except Exception as e:
             print(f'An error occurred: {e}')
             logger.error(f'An error occurred: {e}')
-
 else:
-    print(f'No files from {yesterday}. Files to upload: {files_count}')
-    logger.error(f'No files from {yesterday}. Files to upload: {files_count}')
+    print('No new files to upload')
+    logger.warning('No new files to upload')
 
