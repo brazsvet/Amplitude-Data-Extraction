@@ -2,15 +2,11 @@
 
 An automated data extraction and loading pipeline that fetches hourly analytics data from Amplitude's Export API and syncs missing files to an Amazon S3 bucket.
 
----
-
 ## Prerequisites
 
 - Python 3.8 or higher
 - An active [Amplitude API Key and Secret Key](https://amplitude.com/docs/apis/analytics/export)
 - AWS credentials with write permissions (`s3:PutObject`, `s3:ListBucket`) to your target S3 bucket
-
----
 
 ## Installation
 
@@ -25,8 +21,6 @@ An automated data extraction and loading pipeline that fetches hourly analytics 
    ```bash
    pip install -r requirements.txt
    ```
-
----
 
 ## Configuration
 
@@ -43,8 +37,6 @@ AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
 AWS_DEFAULT_REGION=your_aws_region
 AWS_BUCKET_NAME=your_s3_bucket_name
 ```
-
----
 
 ## Usage
 
@@ -66,8 +58,6 @@ The `amplitude_extract.py` script executes the following steps automatically:
 
 > **API Reference:** For information on status codes, rate limits, and API specs, visit the [Amplitude Export API Documentation](https://amplitude.com/docs/apis/analytics/export).
 
----
-
 ### 2. Load Data to AWS S3
 
 Ensure your S3 bucket is created and your `.env` configuration contains your AWS credentials, then run the upload script:
@@ -77,8 +67,6 @@ python s3_load.py
 ```
 
 - **Idempotent Upload:** The script checks the contents of your S3 bucket prior to uploading. Only `.json` files that are not already present in the target S3 bucket will be uploaded.
-
----
 
 ## Directory Structure
 
