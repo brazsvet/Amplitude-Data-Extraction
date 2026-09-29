@@ -65,6 +65,7 @@ files_count = len(files_to_upload)
 if files_count > 0:
     print(f'Files to upload: {files_count}')
     logger.info(f'Files to upload: {files_count}')
+    
     # uploading the files to s3 bucket
     for file in files_to_upload:
         filename_s3 = file
@@ -81,4 +82,5 @@ if files_count > 0:
 else:
     print('No new files to upload')
     logger.warning('No new files to upload')
+
 
