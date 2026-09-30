@@ -40,8 +40,6 @@ AWS_BUCKET_NAME=your_s3_bucket_name
 
 ## Usage
 
-### 1. Extract Data from Amplitude
-
 Run the extraction script to download yesterday's hourly event data from Amplitude and uploads it to the s3 bucket:
 
 ```bash
@@ -50,7 +48,7 @@ python main.py
 
 Ensure your S3 bucket is created and your `.env` configuration contains your AWS credentials.
 
-#### Workflow & Directory Structure
+## Workflow & Directory Structure
 
 The `amplitude_extract()` function:
 
@@ -75,8 +73,8 @@ The `s3_load()` function:
 ├──── log_initialise.py     # Initialise the logging
 ├──── amplitude_extract.py  # Amplitude extraction script
 ├──── load_function.py      # S3 loader script
-├── data/                   # Downloaded .zip files
 ├── log/                    # Logs folder
+├── data/                   # Downloaded .zip files
 ├──── {start}-{end}/        # Decompressed .gz files
 └──── extracted_jsons/      # Final output .json files (1+ per hour)
 ```
