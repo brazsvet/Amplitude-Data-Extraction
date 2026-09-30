@@ -1,4 +1,4 @@
-# Amplitude to S3 ETL Pipeline
+# Amplitude to S3 Extract & Load Pipeline
 
 An automated data extraction and loading pipeline that fetches hourly analytics data from Amplitude's Export API and syncs missing files to an Amazon S3 bucket.
 
