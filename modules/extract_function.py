@@ -8,19 +8,18 @@ from datetime import date
 
 logger = logging.getLogger(__name__)
 
-def extract_json(data_dir:str, url:str, date:date, api_key:str, secret_key:str):
+def amplitude_extract(data_dir:str, url:str, date:date, api_key:str, secret_key:str):
     """The function is calling Amplitude API using given credentials and stores extracted json files to the data_dir folder. 
     The API call returnes the web-site event based data for the chosen date. 
 
     Args:
         data_dir (str): name of the directory where data files are stored
         url (str): API URL
-        start_time (str): beginning of the time range, format: yyyymmdd'T'HH, example: 20260930T00
-        end_time (str): end of the time range, format: yyyymmdd'T'HH, example: 20260930T23
-        AMP_API_KEY (str): _description_
-        AMP_SECRET_KEY (str): _description_
+        date (date): chosen date to retrieve the data
+        AMP_API_KEY (str): Amplitude access key
+        AMP_SECRET_KEY (str): Amplitude secret key
     """
-    # transform the date to the API accessable format
+    # transform the date to the Amplitude API accessable format
     chosen_date = str(date).replace("-", "")
     start_time = f'{chosen_date}T00'
     end_time = f'{chosen_date}T23'
