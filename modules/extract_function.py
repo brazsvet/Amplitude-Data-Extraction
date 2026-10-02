@@ -81,7 +81,7 @@ def amplitude_extract(data_dir:str, url:str, date:date, api_key:str, secret_key:
                     with gzip.open(f'{gz_path}/{filename}', "rt", encoding="utf-8") as f:
                         data = f.read()
                         with open(json_path, "w") as file:
-                            json.dump(data, file)
+                            file.write(data)
                     # delete unpacked .gz file
                     os.remove(f'{gz_path}/{filename}')
                 except Exception as e:

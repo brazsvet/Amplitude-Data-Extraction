@@ -23,7 +23,7 @@ def s3_load(data_dir:str, date:date, AWS_ACCESS_KEY:str, AWS_SECRET_ACCESS_KEY:s
 
     files_path = f'{data_dir}/{start_time}-{end_time}/extracted_jsons'
 
-    # connect to AWS user
+    # # connect to AWS user
     s3_client = boto3.client(
         's3',
         aws_access_key_id=AWS_ACCESS_KEY,
@@ -33,27 +33,27 @@ def s3_load(data_dir:str, date:date, AWS_ACCESS_KEY:str, AWS_SECRET_ACCESS_KEY:s
     # list all files in the yesterday folder
     files_extracted = os.listdir(files_path)
 
-    # list the files in the s3 bucket
-    objects = s3_client.list_objects_v2(Bucket=AWS_BUCKET_NAME)
-    files_s3 = []
-    for my_bucket_object in objects['Contents']:
-        files_s3.append(my_bucket_object['Key'])
+    # # list the files in the s3 bucket
+    # objects = s3_client.list_objects_v2(Bucket=AWS_BUCKET_NAME)
+    # files_s3 = []
+    # for my_bucket_object in objects['Contents']:
+    #     files_s3.append(my_bucket_object['Key'])
 
     # only upload the files that are not in s3 bucket
-    files_to_upload = []
-    for file in files_extracted:
-        if file not in files_s3:
-            files_to_upload.append(file)
+    # files_to_upload = []
+    # for file in files_extracted:
+    #     if file not in files_s3:
+    #         files_to_upload.append(file)
 
     # check if there are files to upload
-    files_count = len(files_to_upload)
+    files_count = len(files_extracted)
 
     if files_count > 0:
         print(f'Files to upload: {files_count}')
         logger.info(f'Files to upload: {files_count}')
         
         # uploading the files to s3 bucket
-        for file in files_to_upload:
+        for file in files_extracted:
             filename_s3 = file
             file_to_upload = f'{files_path}/{file}'
             try:
